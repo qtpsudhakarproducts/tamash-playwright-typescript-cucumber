@@ -1,0 +1,21 @@
+{
+  "name": "tamash-playwright-typescript-cucumber",
+  "version": "1.0.0",
+  "description": "Example usage of tamash-playwright with Cucumber BDD (TypeScript), with and without the Page Object Model.",
+  "scripts": {
+    "test": "cucumber-js"
+  },
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@cucumber/cucumber": "^11.2.0",
+    "@types/node": "^24.0.0",
+    "dotenv": "^16.0.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.0"
+  },
+  "dependencies": {
+    "playwright": "^1.62.1",
+    "tamash-playwright": "^0.4.0"
+  }
+}
