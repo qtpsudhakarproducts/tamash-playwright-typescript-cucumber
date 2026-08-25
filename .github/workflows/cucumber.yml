@@ -9,14 +9,17 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     env:
-      # Temporarily testing claude-subscription (a Claude Pro/Max/Team/Enterprise subscription via
-      # CLAUDE_CODE_OAUTH_TOKEN, no API key) end-to-end in CI — see tamash-playwright's own README,
-      # "Using your Claude or GitHub Copilot subscription instead of an API key".
+      # Temporarily testing copilot-subscription end-to-end in CI. Goes straight to a
+      # personal-account PAT (COPILOT_GITHUB_TOKEN) rather than the ambient GITHUB_TOKEN +
+      # copilot-requests: write permission — this repo is owned by the qtpsudhakarproducts ORG,
+      # which doesn't itself have Copilot enabled (confirmed the hard way in the sibling
+      # tamash-playwright-typescript-playwright repo's own CI test), even though the qtpsudhakar
+      # personal account does. See tamash-playwright's own README for the full explanation.
       HEALER_ENABLED: true
-      HEALER_PROVIDER: claude-subscription
-      CLAUDE_SUBSCRIPTION_MODEL: haiku
+      HEALER_PROVIDER: copilot-subscription
+      COPILOT_SUBSCRIPTION_MODEL: mai-code-1-flash-picker
       APP_BASE_URL: https://qtpsudhakar-vibetestq-hrm.up.railway.app/
-      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+      COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
