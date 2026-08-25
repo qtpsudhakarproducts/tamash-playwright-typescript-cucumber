@@ -12,7 +12,11 @@ import { TamashWorld } from './world';
 setDefaultTimeout(60 * 1000);
 
 Before(async function (this: TamashWorld) {
-    this.browser = await chromium.launch({ headless: false });
+    // headless: false is nice locally (watch the browser), but a CI runner has no display and
+    // would fail outright trying to launch a headed browser — CI=true is set automatically by
+    // GitHub Actions (and most other CI systems), so this only needs to be explicit here, not
+    // configured per-workflow.
+    this.browser = await chromium.launch({ headless: !!process.env.CI });
     this.context = await this.browser.newContext({ baseURL: process.env.APP_BASE_URL });
     // Wrap the raw Playwright page so every action call heals itself on a broken selector,
     // exactly like the `page` fixture tamash-playwright injects for @playwright/test.
