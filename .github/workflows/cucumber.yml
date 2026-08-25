@@ -8,6 +8,15 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    env:
+      # Temporarily testing claude-subscription (a Claude Pro/Max/Team/Enterprise subscription via
+      # CLAUDE_CODE_OAUTH_TOKEN, no API key) end-to-end in CI — see tamash-playwright's own README,
+      # "Using your Claude or GitHub Copilot subscription instead of an API key".
+      HEALER_ENABLED: true
+      HEALER_PROVIDER: claude-subscription
+      CLAUDE_SUBSCRIPTION_MODEL: haiku
+      APP_BASE_URL: https://qtpsudhakar-vibetestq-hrm.up.railway.app/
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -19,3 +28,11 @@ jobs:
       run: npx playwright install --with-deps chromium
     - name: Run Cucumber tests
       run: npm test
+    - name: Upload self-healing log
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: heals-log
+        path: .tamash-playwright/heals.jsonl
+        if-no-files-found: ignore
+        retention-days: 7
