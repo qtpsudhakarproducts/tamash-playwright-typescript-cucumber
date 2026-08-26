@@ -2,9 +2,9 @@ import path from 'path';
 import dotenv from 'dotenv';
 dotenv.config({ path: path.resolve(__dirname, '..', '..', '.env') });
 
-import { Before, After, setDefaultTimeout } from '@cucumber/cucumber';
+import { Before, After, AfterAll, setDefaultTimeout } from '@cucumber/cucumber';
 import { chromium } from 'playwright';
-import { bindPageActions } from 'tamash-playwright';
+import { bindPageActions, closeCopilotSubscriptionClient } from 'tamash-playwright';
 import { TamashWorld } from './world';
 
 // Cucumber's 5s default step timeout doesn't leave room for a real page navigation plus,
@@ -27,4 +27,12 @@ Before(async function (this: TamashWorld) {
 After(async function (this: TamashWorld) {
     await this.context?.close();
     await this.browser?.close();
+});
+
+// copilot-subscription keeps a shared client open across calls for performance -- Playwright's own
+// test runner force-exits regardless of lingering handles, but Cucumber's CLI does not, so without
+// this the process hangs indefinitely after every scenario has already passed. No-op if
+// copilot-subscription was never used, so safe to always run.
+AfterAll(async function () {
+    await closeCopilotSubscriptionClient();
 });
