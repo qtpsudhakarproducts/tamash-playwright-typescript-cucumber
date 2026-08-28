@@ -4,7 +4,7 @@ dotenv.config({ path: path.resolve(__dirname, '..', '..', '.env') });
 
 import { Before, After, AfterAll, setDefaultTimeout } from '@cucumber/cucumber';
 import { chromium } from 'playwright';
-import { bindPageActions, closeCopilotSubscriptionClient } from 'tamash-playwright';
+import { bindContext, bindPageActions, closeCopilotSubscriptionClient } from 'tamash-playwright';
 import { TamashWorld } from './world';
 
 // Cucumber's 5s default step timeout doesn't leave room for a real page navigation plus,
@@ -17,7 +17,10 @@ Before(async function (this: TamashWorld) {
     // GitHub Actions (and most other CI systems), so this only needs to be explicit here, not
     // configured per-workflow.
     this.browser = await chromium.launch({ headless: !!process.env.CI });
-    this.context = await this.browser.newContext({ baseURL: process.env.APP_BASE_URL });
+    // bindContext() first, not just bindPageActions() on the page below: without it, a popup/new
+    // tab opened during a scenario (context.newPage()/waitForEvent('page'), or a page.on('popup',
+    // ...) handler) would hand back a raw, non-healing page -- the exact gap this line closes.
+    this.context = bindContext(await this.browser.newContext({ baseURL: process.env.APP_BASE_URL }));
     // Wrap the raw Playwright page so every action call heals itself on a broken selector,
     // exactly like the `page` fixture tamash-playwright injects for @playwright/test.
     this.page = bindPageActions(await this.context.newPage());
