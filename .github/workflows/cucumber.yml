@@ -71,3 +71,32 @@ jobs:
         path: .tamash-playwright/heals.jsonl
         if-no-files-found: ignore
         retention-days: 7
+
+  # Same independent, additive shape as test-ollama above. tamash needs no key/subscription at
+  # all -- the cheapest possible thing to add real CI coverage for.
+  test-tamash:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    env:
+      HEALER_ENABLED: true
+      HEALER_PROVIDER: tamash
+      APP_BASE_URL: https://qtpsudhakar-vibetestq-hrm.up.railway.app/
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps chromium
+    - name: Run Cucumber tests
+      run: npm test
+    - name: Upload self-healing log
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: heals-log-tamash
+        path: .tamash-playwright/heals.jsonl
+        if-no-files-found: ignore
+        retention-days: 7
