@@ -11,6 +11,7 @@ export class TamashWorld extends CucumberWorld {
     browser!: Browser;
     context!: BrowserContext;
     page!: Page;
+    newPage?: Page;
 
     basePage!: BasePage;
     loginPage!: LoginPage;

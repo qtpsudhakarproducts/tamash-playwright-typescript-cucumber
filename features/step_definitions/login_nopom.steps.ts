@@ -9,7 +9,7 @@ Given('I open the OrangeHRM login page', async function (this: TamashWorld) {
 
 When('I fill in username {string} and password {string} using CSS selectors', async function (this: TamashWorld, username: string, password: string) {
     // Intentionally broken selector ("username1") to demonstrate self-healing recovery.
-    const txtUserName = this.page.locator('input[name="username1"]').describe('User Name Textbox');
+    const txtUserName = this.page.locator('input[name="username1"]').describe('Username Textbox');
     await txtUserName.fill(username);
 
     const txtPassword = this.page.locator("input[placeholder='Password']").describe('Password Textbox');
